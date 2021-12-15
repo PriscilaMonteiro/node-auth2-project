@@ -30,6 +30,16 @@ router.post("/register", validateRoleName, (req, res, next) => {
 
 
 router.post("/login", checkUsernameExists, (req, res, next) => {
+  let { password } = req.body;
+      if ( bcrypt.compareSync(password, req.user.password)) {
+        // HERE IS WHERE WE CREATE TOKEN AND APPEND IT TO THE RESPONSE
+        const token = tokenBuilder(req.user) // OK :)
+        res.status(200).json({
+          message: `${req.user.username} is back!`, token
+        });
+      } else {
+        next({ status: 401, message: 'Invalid credentials' })
+  }
   /**
     [POST] /api/auth/login { "username": "sue", "password": "1234" }
 
